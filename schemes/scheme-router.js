@@ -4,29 +4,32 @@ const Schemes = require('./scheme-model.js');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-  try {
-    const schemes = await Schemes.find();
-    res.json(schemes);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to get schemes' });
-  }
+router.get('/', (req, res) => {
+  Schemes
+    .find()
+    .then(scheme => {
+      res.status(200).json(scheme)
+    })
+    .catch(err =>{
+      res.status(500).json({ message: 'Failed to get schemes' });
+    }) 
 });
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
-  try {
-    const scheme = await Schemes.findById(id);
-
-    if (scheme) {
-      res.json(scheme);
-    } else {
-      res.status(404).json({ message: 'Could not find scheme with given id.' })
-    }
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to get schemes' });
-  }
+    Schemes
+      .findById(id)
+      .then(scheme => {
+        if (scheme) {
+          res.status(200).json(scheme);
+        } else {
+          res.status(404).json({ message: 'Could not find scheme with given id.' })
+        }
+      })  
+      .catch (err => {
+        res.status(500).json({ message: 'Failed to get schemes' });
+      })
 });
 
 router.get('/:id/steps', async (req, res) => {
